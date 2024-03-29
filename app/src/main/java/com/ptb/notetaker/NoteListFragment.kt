@@ -27,10 +27,12 @@ class NoteListFragment : Fragment() {
 
         _binding = FragmentNoteListBinding.inflate(inflater, container, false)
 
-        binding.listNotes.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, DataManager.notes)
+        binding.listNotes.adapter =
+            ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, DataManager.notes)
+
         binding.listNotes.setOnItemClickListener() { parent, view, position, id ->
-            val activityIntent =Intent(requireContext(), MainActivity::class.java)
-            activityIntent.putExtra(NOTE_POSITION, position )
+            val activityIntent = Intent(requireContext(), MainActivity::class.java)
+            activityIntent.putExtra(NOTE_POSITION, position)
             startActivity(activityIntent)
         }
 
@@ -49,6 +51,7 @@ class NoteListFragment : Fragment() {
         (binding.listNotes.adapter as ArrayAdapter<NoteInfo>).notifyDataSetChanged()
 
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

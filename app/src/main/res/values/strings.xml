@@ -9,6 +9,7 @@
     <string name="note_title">Note Title</string>
     <string name="note">Note</string>
     <string name="add_something">Add Something</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="back">Back</string>
+    <string name="add_new_note">Add New Note</string>
 </resources>

@@ -19,7 +19,8 @@ import com.google.android.material.snackbar.Snackbar
 class NoteEditFragment : Fragment(), NavArgs {
     private lateinit var noteEditViewModel: NoteEditViewModel
 
-private var _binding: FragmentNoteEditBinding? = null
+    private var _binding: FragmentNoteEditBinding? = null
+
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
@@ -29,26 +30,34 @@ private var _binding: FragmentNoteEditBinding? = null
         savedInstanceState: Bundle?
     ): View {
 
-      _binding = FragmentNoteEditBinding.inflate(inflater, container, false)
-      return binding.root
+        _binding = FragmentNoteEditBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val adapterCourses = ArrayAdapter<CourseInfo>(binding.root.context,
-            android.R.layout.simple_spinner_item, DataManager.courses.values.toList())
+        val adapterCourses = ArrayAdapter<CourseInfo>(
+            binding.root.context,
+            android.R.layout.simple_spinner_item, DataManager.courses.values.toList()
+        )
+
         adapterCourses.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerCourses.adapter = adapterCourses
+
         noteEditViewModel = ViewModelProvider(requireActivity())[NoteEditViewModel::class.java]
-        noteEditViewModel.updateNotePosition(requireActivity().intent.getIntExtra(NOTE_POSITION, POSITION_NOT_SET))
+        val localNotePosition =
+            savedInstanceState?.getInt(NOTE_POSITION) ?: requireActivity().intent.getIntExtra(
+                NOTE_POSITION,
+                POSITION_NOT_SET
+            )
+        noteEditViewModel.updateNotePosition(localNotePosition)
         noteEditViewModel.notePosition.observe(viewLifecycleOwner) { notePosition ->
             notePosition?.let {
-                if ( notePosition == POSITION_NOT_SET) {
+                if (notePosition == POSITION_NOT_SET) {
                     DataManager.notes.add(NoteInfo())
                     noteEditViewModel.updateNotePosition(DataManager.notes.lastIndex)
-                }
-                else if (notePosition < 0) {
+                } else if (notePosition < 0) {
                     DataManager.notes.removeAt(DataManager.notes.lastIndex)
                 }
                 displayNote()
@@ -73,7 +82,7 @@ private var _binding: FragmentNoteEditBinding? = null
     }
 
     private fun displayNote() {
-        val nextIndex =noteEditViewModel.notePosition.value!!
+        val nextIndex = noteEditViewModel.notePosition.value!!
         if (nextIndex < 0) return
         val note = DataManager.notes[noteEditViewModel.notePosition.value!!]
         binding.textNoteTitle.setText(note.title)
@@ -94,4 +103,10 @@ private var _binding: FragmentNoteEditBinding? = null
         super.onDestroyView()
         _binding = null
     }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt(NOTE_POSITION, noteEditViewModel.notePosition.value!!)
+    }
+
 }
